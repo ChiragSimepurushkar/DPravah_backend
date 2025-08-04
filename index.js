@@ -239,7 +239,7 @@ app.post("/signup", async (req, res, next) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
-            domain: "d-pravah-backend.vercel.app" 
+            // domain: "d-pravah-backend.vercel.app" 
         });
         res
             .status(201)
@@ -271,7 +271,7 @@ app.post('/login', async (req, res, next) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
-            domain: "d-pravah-backend.vercel.app" 
+            // domain: "d-pravah-backend.vercel.app" 
         });
         res.status(201).json({ message: "User logged in successfully", success: true });
         next()
