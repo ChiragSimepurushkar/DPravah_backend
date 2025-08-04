@@ -296,8 +296,14 @@ app.post('/verify', (req, res) => {
 })
 
 
-app.listen(3002, () => {
-    console.log("Server is running on port 3002");
-    mongoose.connect(mongourl);
-    console.log("Connected to MongoDB");
-});
+mongoose.connect(mongourl)
+  .then(() => {
+    console.log("Connected to MongoDB successfully!");
+    // Only start listening for requests after the database is connected
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+  });
