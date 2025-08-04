@@ -25,11 +25,11 @@ const mongourl = process.env.MONGO_URL;
 const app = express();
 
 app.use(
-  cors({
-    origin: ["https://d-pravah-frontend.vercel.app", "https://d-pravah-dashboard.vercel.app"], // Allow both frontend apps
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
+    cors({
+        origin: ["https://d-pravah-frontend.vercel.app", "https://d-pravah-dashboard.vercel.app"], // Allow both frontend apps
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true,
+    })
 );
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -236,6 +236,8 @@ app.post("/signup", async (req, res, next) => {
         res.cookie("token", token, {
             withCredentials: true,
             httpOnly: false,
+            secure: true,
+            sameSite: "none",
         });
         res
             .status(201)
@@ -265,6 +267,8 @@ app.post('/login', async (req, res, next) => {
         res.cookie("token", token, {
             withCredentials: true,
             httpOnly: false,
+            secure: true,
+            sameSite: "none",
         });
         res.status(201).json({ message: "User logged in successfully", success: true });
         next()
