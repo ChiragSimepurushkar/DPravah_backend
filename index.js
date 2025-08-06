@@ -246,12 +246,13 @@ app.post("/signup", async (req, res, next) => {
             success: true,
             token // Send the token
         });
-        res
-            .status(201)
-            .json({ message: "User signed in successfully", success: true, user });
-        next();
+        // res
+        //     .status(201)
+        //     .json({ message: "User signed in successfully", success: true, user });
+        // // next();
     } catch (error) {
         console.error(error);
+        res.status(500).json({ message: "Internal server error" });
     }
 }
 );
@@ -283,10 +284,11 @@ app.post('/login', async (req, res, next) => {
             success: true,
             token // Send the token
         });
-        res.status(201).json({ message: "User logged in successfully", success: true });
-        next()
+        // res.status(201).json({ message: "User logged in successfully", success: true });
+        // next()
     } catch (error) {
         console.error(error);
+        res.status(500).json({ message: "Internal server error" });
     }
 })
 
