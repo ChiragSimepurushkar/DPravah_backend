@@ -27,7 +27,7 @@ const app = express();
 app.use(
     cors({
         origin: ["http://localhost:3000",
-      "http://localhost:3001","https://d-pravah-frontend.vercel.app", "https://d-pravah-dashboard.vercel.app"], // Allow both frontend apps
+            "http://localhost:3001", "https://d-pravah-frontend.vercel.app", "https://d-pravah-dashboard.vercel.app"], // Allow both frontend apps
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     })
@@ -234,12 +234,17 @@ app.post("/signup", async (req, res, next) => {
         }
         const user = await User.create({ email, password, username, createdAt });
         const token = createSecretToken(user._id);
-        res.cookie("token", token, {
-            withCredentials: true,
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            // domain: "d-pravah-backend.vercel.app" 
+        // res.cookie("token", token, {
+        //     withCredentials: true,
+        //     httpOnly: true,
+        //     secure: true,
+        //     sameSite: "none",
+        //     // domain: "d-pravah-backend.vercel.app" 
+        // });
+        res.status(201).json({
+            message: "User signed in successfully",
+            success: true,
+            token // Send the token
         });
         res
             .status(201)
@@ -266,12 +271,17 @@ app.post('/login', async (req, res, next) => {
             return res.json({ message: 'Incorrect password or email' })
         }
         const token = createSecretToken(user._id);
-        res.cookie("token", token, {
-            withCredentials: true,
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            // domain: "d-pravah-backend.vercel.app" 
+        // res.cookie("token", token, {
+        //     withCredentials: true,
+        //     httpOnly: true,
+        //     secure: true,
+        //     sameSite: "none",
+        //     // domain: "d-pravah-backend.vercel.app" 
+        // });
+        res.status(200).json({ // Use 200 for success, not 201
+            message: "User logged in successfully",
+            success: true,
+            token // Send the token
         });
         res.status(201).json({ message: "User logged in successfully", success: true });
         next()
@@ -282,30 +292,52 @@ app.post('/login', async (req, res, next) => {
 
 //userVerification 
 app.post('/verify', (req, res) => {
-    const token = req.cookies.token
-    if (!token) {
-        return res.json({ status: false })
+    // const token = req.cookies.token
+    // if (!token) {
+    //     return res.json({ status: false })
+    // }
+    // jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
+    //     if (err) {
+    //         return res.json({ status: false })
+    //     } else {
+    //         const user = await User.findById(data.id)
+    //         if (user) return res.json({ status: true, user: user.username })
+    //         else return res.json({ status: false })
+    //     }
+    // })
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.json({ status: false });
     }
+
+    const token = authHeader.split(' ')[1]; // Extract token from "Bearer <token>"
+
+    if (!token) {
+        return res.json({ status: false });
+    }
+
     jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
         if (err) {
-            return res.json({ status: false })
+            return res.json({ status: false });
         } else {
-            const user = await User.findById(data.id)
-            if (user) return res.json({ status: true, user: user.username })
-            else return res.json({ status: false })
+            const user = await User.findById(data.id);
+            if (user) return res.json({ status: true, user: user.username });
+            else return res.json({ status: false });
         }
-    })
+    });
 })
 
 
 mongoose.connect(mongourl)
-  .then(() => {
-    console.log("Connected to MongoDB successfully!");
-    // Only start listening for requests after the database is connected
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+    .then(() => {
+        console.log("Connected to MongoDB successfully!");
+        // Only start listening for requests after the database is connected
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    })
+    .catch((err) => {
+        console.error("MongoDB connection error:", err);
     });
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-  });
