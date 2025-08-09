@@ -27,7 +27,10 @@ const app = express();
 app.use(
     cors({
         origin: ["http://localhost:3000",
-            "http://localhost:3001", "https://d-pravah-frontend.vercel.app", "https://d-pravah-dashboard.vercel.app"], // Allow both frontend apps
+            "http://localhost:3001", 
+            // "https://d-pravah-frontend.vercel.app", 
+            // "https://d-pravah-dashboard.vercel.app"
+          ], // Allow both frontend apps
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     })
