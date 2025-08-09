@@ -225,37 +225,59 @@ app.post("/newOrder", async (req, res) => {
 });
 
 
+// app.post("/signup", async (req, res, next) => {
+//     try {
+//         const { email, password, username, createdAt } = req.body;
+//         const existingUser = await User.findOne({ email });
+//         if (existingUser) {
+//             return res.json({ message: "User already exists" });
+//         }
+//         const user = await User.create({ email, password, username, createdAt });
+//         const token = createSecretToken(user._id);
+//         // res.cookie("token", token, {
+//         //     withCredentials: true,
+//         //     httpOnly: true,
+//         //     secure: true,
+//         //     sameSite: "none",
+//         //     // domain: "d-pravah-backend.vercel.app" 
+//         // });
+//         res.status(201).json({
+//             message: "User signed in successfully",
+//             success: true,
+//             token // Send the token
+//         });
+//         // res
+//         //     .status(201)
+//         //     .json({ message: "User signed in successfully", success: true, user });
+//         // // next();
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: "Internal server error" });
+//     }
+// }
+// );
+
 app.post("/signup", async (req, res, next) => {
-    try {
-        const { email, password, username, createdAt } = req.body;
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.json({ message: "User already exists" });
-        }
-        const user = await User.create({ email, password, username, createdAt });
-        const token = createSecretToken(user._id);
-        // res.cookie("token", token, {
-        //     withCredentials: true,
-        //     httpOnly: true,
-        //     secure: true,
-        //     sameSite: "none",
-        //     // domain: "d-pravah-backend.vercel.app" 
-        // });
-        res.status(201).json({
-            message: "User signed in successfully",
-            success: true,
-            token // Send the token
-        });
-        // res
-        //     .status(201)
-        //     .json({ message: "User signed in successfully", success: true, user });
-        // // next();
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal server error" });
+  try {
+    const { email, password, username, createdAt } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.json({ message: "User already exists" });
     }
-}
-);
+    const user = await User.create({ email, password, username, createdAt });
+    const token = createSecretToken(user._id);
+    res.cookie("token", token, {
+      withCredentials: true,
+      httpOnly: false,
+    });
+    res
+      .status(201)
+      .json({ message: "User signed in successfully", success: true, user });
+    next();
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 app.post('/login', async (req, res, next) => {
     try {
@@ -332,7 +354,10 @@ app.post('/verify', (req, res) => {
 })
 
 
-mongoose.connect(mongourl)
+mongoose.connect(mongourl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
     .then(() => {
         console.log("Connected to MongoDB successfully!");
         // Only start listening for requests after the database is connected
