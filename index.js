@@ -270,8 +270,10 @@ app.post("/signup", async (req, res, next) => {
     const user = await User.create({ email, password, username, createdAt });
     const token = createSecretToken(user._id);
     res.cookie("token", token, {
-      withCredentials: true,
-      httpOnly: false,
+      httpOnly: true,
+  secure: true,       // ✅ REQUIRED for cross-site cookies
+  sameSite: "none",   // ✅ REQUIRED for cross-site cookies
+  maxAge: 3600000,    
     });
     res
       .status(201)
@@ -332,8 +334,10 @@ app.post('/login', async (req, res, next) => {
     }
      const token = createSecretToken(user._id);
      res.cookie("token", token, {
-       withCredentials: true,
-       httpOnly: false,
+       httpOnly: true,
+  secure: true,       // ✅ REQUIRED for cross-site cookies
+  sameSite: "none",   // ✅ REQUIRED for cross-site cookies
+  maxAge: 3600000,    
      });
      res.status(201).json({ message: "User logged in successfully", success: true });
      next()
