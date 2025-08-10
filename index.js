@@ -228,6 +228,27 @@ app.post("/newOrder", async (req, res) => {
 });
 
 
+const userVerification =(req, res) => {
+  const token = req.cookies.token
+  if (!token) {
+    return res.json({ status: false,message: "No token provided" })
+  }
+  jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
+    if (err) {
+      return res.status(401).json({ status: false, message: "Token verification failed" });
+    } else {
+      const user = await User.findById(data.id);
+      if (user) {
+        // If user is valid, attach user info to request and continue
+        req.user = user;
+        next(); // This is the correct use of next()
+      } else {
+        return res.status(401).json({ status: false, message: "User not found" });
+      }
+    }
+  })
+};
+
 // app.post("/signup", async (req, res, next) => {
 //     try {
 //         const { email, password, username, createdAt } = req.body;
@@ -362,27 +383,6 @@ app.post('/login', async (req, res, next) => {
 //     //     }
 //     // })
 
-const userVerification =(req, res) => {
-  const token = req.cookies.token
-  if (!token) {
-    return res.json({ status: false,message: "No token provided" })
-  }
-  jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
-    if (err) {
-      return res.status(401).json({ status: false, message: "Token verification failed" });
-    } else {
-      const user = await User.findById(data.id);
-      if (user) {
-        // If user is valid, attach user info to request and continue
-        req.user = user;
-        next(); // This is the correct use of next()
-      } else {
-        return res.status(401).json({ status: false, message: "User not found" });
-      }
-    }
-  })
-};
-
 //     const authHeader = req.headers.authorization;
 
 //     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -420,4 +420,6 @@ mongoose.connect(mongourl, {
     })
     .catch((err) => {
         console.error("MongoDB connection error:", err);
-    });
+    }
+  
+);
