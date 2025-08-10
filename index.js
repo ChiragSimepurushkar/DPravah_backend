@@ -381,7 +381,7 @@ const userVerification =(req, res) => {
       }
     }
   })
-});
+};
 
 //     const authHeader = req.headers.authorization;
 
