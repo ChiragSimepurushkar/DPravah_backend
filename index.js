@@ -206,16 +206,6 @@ app.use(cookieParser());
 // res.send("Positions added successfully");
 // })
 
-app.get("/allHoldings", userVerification, async (req, res) => {
-    let allHoldings = await HoldingsModel.find({});
-    res.json(allHoldings);
-})
-
-app.get("/allPositions",userVerification, async (req, res) => {
-    let allPositions = await PositionsModel.find({});
-    res.json(allPositions);
-})
-
 app.post("/newOrder", async (req, res) => {
     let newOrder = new OrdersModel({
         name: req.body.name,
@@ -248,7 +238,15 @@ const userVerification =(req, res) => {
     }
   })
 };
+app.get("/allHoldings", userVerification, async (req, res) => {
+    let allHoldings = await HoldingsModel.find({});
+    res.json(allHoldings);
+})
 
+app.get("/allPositions",userVerification, async (req, res) => {
+    let allPositions = await PositionsModel.find({});
+    res.json(allPositions);
+})
 // app.post("/signup", async (req, res, next) => {
 //     try {
 //         const { email, password, username, createdAt } = req.body;
